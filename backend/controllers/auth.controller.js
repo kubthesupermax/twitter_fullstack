@@ -1,9 +1,10 @@
-import User from "../models/user.model";
+import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
+import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, username, email, password } = req.body;
+    const { fullName, username, email, password } = req.body; // Destructure the request body
 
     // If the email doesn't match the regular expression (invalid email format),
     // return a 400 Bad Request response with an error message.
@@ -24,6 +25,13 @@ export const signup = async (req, res) => {
       return res.status(400).json({ error: "Email is already taken" });
     }
 
+    // Check if the password is at least 6 characters long
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
+    }
+
     // hash password
     const salt = await bcrypt.genSalt(10); // The number 10 refers to the cost factor (salt rounds); the higher the number, the more secure but slower the hashing process.
 
@@ -39,12 +47,13 @@ export const signup = async (req, res) => {
     });
 
     if (newUser) {
-      // Generate a token based on the user's ID and set it as a cookie in the response.
-      generateTokenAndSetCookie(newUser._id, res);
-
-      // Save the new user to the database after the token is generated and cookie is set.
+      // First, save the user to the database
       await newUser.save();
 
+      // Then, generate the token and set the cookie
+      generateTokenAndSetCookie(newUser._id, res);
+
+      // Send a response with the new user's details
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
@@ -60,6 +69,7 @@ export const signup = async (req, res) => {
     }
   } catch (error) {
     console.log("Error in signup controller", error.message);
+
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
