@@ -46,6 +46,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
+    // Save the new user
     if (newUser) {
       // First, save the user to the database
       await newUser.save();
@@ -80,6 +81,7 @@ export const login = async (req, res) => {
 
     // Find the user by username
     const user = await User.findOne({ username });
+
     const isPasswordValid = await bcrypt.compare(
       password,
       user?.password || ""
@@ -122,6 +124,7 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
+    // Find the user by ID
     const user = await User.findById(req.user._id).select("-password");
     res.status(200).json(user);
   } catch (error) {

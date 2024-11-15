@@ -1,9 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
-
-import authRoutes from "./routes/auth.routes.js";
-import connectMongoDB from "./db/connectMongoDB.js";
 import cookieParser from "cookie-parser";
+
+// Import routes
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+
+import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 console.log(process.env.MONGO_URI); // Add this line to check the value
@@ -21,7 +24,9 @@ app.use(cookieParser());
 // The 'cookie-parser' package makes it easy to read cookies from the incoming requests.
 // After this, we can access cookies using 'req.cookies' in any route in our app.
 
+// Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
