@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import { v2 as cloudinary } from "cloudinary";
 
 // Import routes
 import authRoutes from "./routes/auth.route.js";
@@ -10,6 +11,13 @@ import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 console.log(process.env.MONGO_URI); // Add this line to check the value
+
+// Configure Cloudinary with credentials from environment variables
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // - cloud_name: Your Cloudinary account's cloud name
+  api_key: process.env.CLOUDINARY_API_KEY, // - api_key: Your Cloudinary API key for authentication
+  api_secret: process.env.CLOUDINARY_API_SECRET, // - api_secret: Your Cloudinary API secret for secure access
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
