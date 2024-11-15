@@ -5,7 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
-console.log(process.env.MONGO_URI); // Add this line to check the valu
+console.log(process.env.MONGO_URI); // Add this line to check the value
 
 const app = express();
 const PORT = process.env.PORT || 5000;

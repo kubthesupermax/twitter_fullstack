@@ -75,13 +75,47 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  res.json({
-    data: "You hit the login endpoint",
-  });
+  try {
+    const { username, password } = req.body;
+
+    // Find the user by username
+    const user = await User.findOne({ username });
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.password || ""
+    ); // Check if the provided password matches the hashed password in the database
+
+    // If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
+    if (!user || !isPasswordValid) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    // Generate the token and set the cookie
+    generateTokenAndSetCookie(user._id, res);
+
+    // Send a response with the user's details
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email,
+      followers: user.followers,
+      following: user.following,
+      profileImg: user.profileImg,
+      coverImg: user.coverImg,
+    });
+  } catch (error) {
+    console.log("Error in login controller", error.message);
+
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 export const logout = async (req, res) => {
-  res.json({
-    data: "You hit the logout endpoint",
-  });
+  try {
+    res.cookie("jwt", "", { maxAge: 0 }); // Clear the cookie
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.log("Error in logout controller", error.message);
+  }
 };
