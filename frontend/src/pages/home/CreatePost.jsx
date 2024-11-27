@@ -22,13 +22,15 @@ const CreatePost = () => {
   };
 
   const handleImgChange = (e) => {
-    const file = e.target.files[0];
+    console.log(e);
+    console.log(e.target);
+    console.log(e.target.files);
+
+    const file = e.target.files[0]; // Get the first selected file
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImg(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const reader = new FileReader(); // Create a FileReader to read the file
+      reader.onload = () => setImg(reader.result); // Set image data after reading
+      reader.readAsDataURL(file); // Read the file as a Data URL
     }
   };
 
